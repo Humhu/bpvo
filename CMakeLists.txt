@@ -121,7 +121,7 @@ else()
 endif()
 
 # REQUIRED packages
-find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui contrib)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui calib3d)# contrib)
 find_package(Eigen  REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -133,7 +133,7 @@ list(APPEND MY_LIBRARIES_CORE ${OpenCV_LIBS})
 set(Boost_USE_STATIC_LIBS     ON)
 set(Boost_USE_STATIC_RUNTIME  ON)
 set(Boost_USE_MULTITHREAD     ON)
-find_package(Boost 1.59.0 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.54.0 REQUIRED COMPONENTS program_options)
 add_definitions(-DWITH_BOOST)
 include_directories(${Boost_INCLUDE_DIRS})
 list(APPEND MY_LIBRARIES ${Boost_LIBRARIES})

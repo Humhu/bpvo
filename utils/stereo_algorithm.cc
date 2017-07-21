@@ -1,5 +1,5 @@
 #include <opencv2/core/core.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/calib3d.hpp>
 
 #include "bpvo/config_file.h"
 
@@ -27,7 +27,8 @@ struct StereoAlgorithm::Impl
     if(icompare("SGBM", alg) || icompare("SemiGlobalBlockMatching", alg))
     {
       _algorithm = Algorithm::SemiGlobalBlockMatching;
-      _sgbm = make_unique<cv::StereoSGBM>(
+      //_sgbm = make_unique<cv::StereoSGBM>(
+      _sgbm = cv::StereoSGBM::create(
           cf.get<int>("minDisparity"),
           cf.get<int>("numberOfDisparities"),
           cf.get<int>("SADWindowSize", 3),
@@ -111,7 +112,7 @@ struct StereoAlgorithm::Impl
           assert(_sgbm);
 
           _dmap_buffer.create(left.size(), CV_16SC1);
-          _sgbm->operator()(left, right, _dmap_buffer);
+          _sgbm->compute(left, right, _dmap_buffer);
 
           _dmap_buffer.convertTo(dmap, CV_32FC1, 1.0 / 16.0, 0.0 );
         } break;
@@ -147,7 +148,8 @@ struct StereoAlgorithm::Impl
 
   Algorithm _algorithm;
   CvStereoBMState* _state;
-  UniquePointer<cv::StereoSGBM> _sgbm;
+  //UniquePointer<cv::StereoSGBM> _sgbm;
+  cv::Ptr<cv::StereoSGBM> _sgbm;
   UniquePointer<SgmStereo> _sgm_stereo;
   UniquePointer<RSGM> _rsgm;
   cv::Mat _dmap_buffer;

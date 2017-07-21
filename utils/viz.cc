@@ -1,7 +1,7 @@
 #include "bpvo/utils.h"
 #include "utils/viz.h"
 
-#include <opencv2/contrib/contrib.hpp>
+#include <opencv2/imgproc.hpp>
 
 namespace bpvo {
 

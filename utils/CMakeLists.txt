@@ -1,5 +1,11 @@
 file(GLOB src "*.cc")
-add_library(bpvo_utils ${LIBRARY_TYPE} ${src})
+add_library(bpvo_utils ${LIBRARY_TYPE} 
+            image_frame.cc
+            rsgm.cc
+            sgm.cc
+            stereo_algorithm.cc
+            stereo_calibration.cc
+            viz.cc)
 set_target_properties(bpvo_utils PROPERTIES LINKER_LANGUAGE CXX)
 
 if(TRUE OR IS_OSX)

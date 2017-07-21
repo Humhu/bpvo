@@ -79,7 +79,7 @@ int main()
     D.convertTo(D, CV_32FC1);
 
     Timer timer;
-    auto result = vo.addFrame(I0.ptr<uint8_t>(), D.ptr<float>());
+    auto result = vo.addFrame(I0, D);
     auto tt = timer.stop().count();
     total_time += ( tt / 1000.0f);
 

@@ -72,14 +72,7 @@ class VisualOdometry
    *
    * \retun Result
    */
-  Result addFrame(const uint8_t* image, const float* disparity);
-
-  template <class FramePointer> inline
-  Result addFrame(const FramePointer& frame) {
-    return this->addFrame(frame->image().template ptr<const uint8_t>(),
-                          frame->disparity().template ptr<const float>());
-  }
-
+  Result addFrame(const cv::Mat& frame, const cv::Mat& disparity);
 
   /**
    * \return the number of points at the specified pyramid level

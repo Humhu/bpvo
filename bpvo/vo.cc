@@ -23,7 +23,6 @@
 #include "bpvo/vo_frame.h"
 #include "bpvo/vo_pose_estimator.h"
 #include "bpvo/trajectory.h"
-#include "bpvo/opencv.h"
 #include "bpvo/point_cloud.h"
 
 namespace bpvo {
@@ -33,7 +32,7 @@ class VisualOdometry::Impl
  public:
   inline Impl(const Matrix33&, float, ImageSize, const AlgorithmParameters& p);
 
-  inline Result addFrame(const uint8_t*, const float*);
+  inline Result addFrame(const cv::Mat&, const cv::Mat&);
 
   inline const Trajectory& trajectory() const { return _trajectory; }
 
@@ -63,9 +62,9 @@ VisualOdometry::VisualOdometry(const Matrix33& K, float baseline,
 
 VisualOdometry::~VisualOdometry() { delete _impl; }
 
-Result VisualOdometry::addFrame(const uint8_t* image, const float* disparity)
+Result VisualOdometry::addFrame(const cv::Mat& image, const cv::Mat& disparity)
 {
-  THROW_ERROR_IF( image == nullptr || disparity == nullptr,
+  THROW_ERROR_IF( image.empty() || disparity.empty(),
                  "nullptr image/disparity" );
 
   return _impl->addFrame(image, disparity);
@@ -123,11 +122,8 @@ static inline Result FirstFrameResult(int n_levels)
 }
 
 inline Result VisualOdometry::Impl::
-addFrame(const uint8_t* I_ptr, const float* D_ptr)
+addFrame(const cv::Mat& I, const cv::Mat& D)
 {
-  const auto I = ToOpenCV(I_ptr, _image_size);
-  const auto D = ToOpenCV(D_ptr, _image_size);
-
   _cur_frame->setData(I, D);
 
   if(!_ref_frame->hasTemplate())

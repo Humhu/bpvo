@@ -27,8 +27,6 @@
 #include "bpvo/timer.h"
 #include "bpvo/trajectory.h"
 
-#include "utils/dataset.h"
-#include "utils/dataset_loader_thread.h"
 #include "utils/viz.h"
 
 #include <atomic>

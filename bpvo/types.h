@@ -158,13 +158,13 @@ enum DescriptorType
  */
 enum GradientEstimationType
 {
-  kCentralDifference_3, // 3-tap central difference [1 0 -1] / 2
+  kCentralDifference_3 = 0x40, // 3-tap central difference [1 0 -1] / 2
   kCentralDifference_5, // 5-tap central difference [-1 8 0 -8 1] / 18
 }; // GradientEstimationType
 
 enum InterpolationType
 {
-  kLinear,  // linear interpolation
+  kLinear = 0x50,  // linear interpolation
   kCosine,  // Cosine interpolation
   kCubic,   // cubic
   kCubicHermite, // cubic hermite (pchip)

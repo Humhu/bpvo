@@ -66,6 +66,10 @@ VisualOdometryPoseEstimator::estimatePose(
     const Matrix44& T_init, Matrix44& T_est)
 {
   std::vector<OptimizerStatistics> ret(ref_frame->numLevels());
+  for(int i = 0; i < ret.size(); ++i )
+  {
+    ret[i].status = kSolverError;
+  }
 
   T_est = T_init;
   _pose_estimator.setParameters(_pose_est_params_low_res);
@@ -78,6 +82,13 @@ VisualOdometryPoseEstimator::estimatePose(
     if(i >= _params.maxTestLevel) {
       _pose_estimator.setParameters(_pose_est_params);
       //optimizer.setParameters(_pose_est_params);
+    }
+
+    // Checks for number of points in templates
+    if( ref_frame->getTemplateDataAtLevel(i)->numPoints() < _params.minNumPixelsToWork )
+    {
+      Warn("VOPoseEstimator: Not enough pixels\n");
+      return ret;
     }
 
     ret[i] = _pose_estimator.run(ref_frame->getTemplateDataAtLevel(i),

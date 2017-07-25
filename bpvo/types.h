@@ -490,6 +490,12 @@ class PointCloud;
  */
 struct Result
 {
+
+  /**
+   * Flag indicating whether estimation succeeded or not.
+   */
+  bool success;
+
   /**
    * The estimated pose.
    *

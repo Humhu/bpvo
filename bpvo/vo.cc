@@ -151,6 +151,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   Result ret;
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                    _T_kf, T_est);
+  ret.success = checkResult( ret.optimizerStatistics );
+  if( !ret.success ) { Warn("First pass pose estimation failed" ); }
 
   ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
@@ -193,6 +195,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
       Matrix44 T_init(Matrix44::Identity());
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
+      if( !ret.success ) { Warn("Second pass pose estimation failed" ); }
+      
       ret.pose = T_est;
       _T_kf = T_est;
     }

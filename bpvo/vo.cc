@@ -182,8 +182,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
 
       ret.pose = T_est *  _T_kf.inverse();
       _T_kf.setIdentity(); // reset initalization
-      Warn("Unable to obtain intermediate frame. Resetting...");
-    } else
+      Warn("Could not obtain intermediate frame!\n");
+    } else // Try using prev_frame as keyframe
     {
       std::swap(_prev_frame, _ref_frame);
       _prev_frame->clear(); // no longer a suitable candidate for keyframing
@@ -196,6 +196,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
       Matrix44 T_init(Matrix44::Identity());
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
+      ret.success = checkResult( ret.optimizerStatistics );  
       if( !ret.success ) { Warn("Keyframe pose re-estimation failed\n" ); }
       if( shouldKeyFrame(T_est) != kNoKeyFraming )
       {

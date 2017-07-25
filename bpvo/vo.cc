@@ -152,7 +152,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                    _T_kf, T_est);
   ret.success = checkResult( ret.optimizerStatistics );
-  if( !ret.success ) { Warn("Initial pose estimation failed" ); }
+  if( !ret.success ) { Warn("Initial pose estimation failed\n"); }
 
   ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
@@ -182,6 +182,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
 
       ret.pose = T_est *  _T_kf.inverse();
       _T_kf.setIdentity(); // reset initalization
+      Warn("Unable to obtain intermediate frame. Resetting...");
     } else
     {
       std::swap(_prev_frame, _ref_frame);
@@ -195,10 +196,10 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
       Matrix44 T_init(Matrix44::Identity());
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
-      if( !ret.success ) { Warn("Keyframe pose re-estimation failed" ); }
+      if( !ret.success ) { Warn("Keyframe pose re-estimation failed\n" ); }
       if( shouldKeyFrame(T_est) != kNoKeyFraming )
       {
-        Warn("Keyframe failed keyframe requirements!");
+        Warn("Keyframe failed keyframe requirements!\n");
         ret.success = false;
       }
       

@@ -32,7 +32,7 @@ class VisualOdometry::Impl
  public:
   inline Impl(const Matrix33&, float, ImageSize, const AlgorithmParameters& p);
 
-  inline Result addFrame(const cv::Mat&, const cv::Mat&);
+  inline Result addFrame(const cv::Mat&, const cv::Mat&, const Matrix44&);
 
   inline const Trajectory& trajectory() const { return _trajectory; }
 
@@ -63,12 +63,13 @@ VisualOdometry::VisualOdometry(const Matrix33& K, float baseline,
 
 VisualOdometry::~VisualOdometry() { delete _impl; }
 
-Result VisualOdometry::addFrame(const cv::Mat& image, const cv::Mat& disparity)
+Result VisualOdometry::addFrame(const cv::Mat& image, const cv::Mat& disparity,
+                                const Matrix44& guess)
 {
   THROW_ERROR_IF( image.empty() || disparity.empty(),
                  "nullptr image/disparity" );
 
-  return _impl->addFrame(image, disparity);
+  return _impl->addFrame(image, disparity, guess);
 }
 
 int VisualOdometry::numPointsAtLevel(int level) const
@@ -134,7 +135,7 @@ checkResult(const std::vector<OptimizerStatistics>& stats)
 }
 
 inline Result VisualOdometry::Impl::
-addFrame(const cv::Mat& I, const cv::Mat& D)
+addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
 {
   _cur_frame->setData(I, D);
 
@@ -147,10 +148,11 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   }
 
   Matrix44 T_est;
+  Matrix44 T_guess = _T_kf * guess;
 
   Result ret;
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
-                                                   _T_kf, T_est);
+                                                   T_guess, T_est);
   ret.success = checkResult( ret.optimizerStatistics );
   if( !ret.success ) { Warn("Initial pose estimation failed\n"); }
 
@@ -193,7 +195,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
       // re-estimate the motion, because the estimate than caused keyframing is
       // most likely bogus
       //
-      Matrix44 T_init(Matrix44::Identity());
+      Matrix44 T_init = guess; //(Matrix44::Identity());
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
       ret.success = checkResult( ret.optimizerStatistics );  

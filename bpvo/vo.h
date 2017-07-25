@@ -67,12 +67,14 @@ class VisualOdometry
    *
    * \param image pointer to the image data
    * \param disparity pionter to disparity map
+   * \param guess predicted motion since last frame
    *
    * Both the image & disparity must have the same size
    *
    * \retun Result
    */
-  Result addFrame(const cv::Mat& frame, const cv::Mat& disparity);
+  Result addFrame(const cv::Mat& frame, const cv::Mat& disparity,
+                  const Matrix44& guess = Matrix44::Identity());
 
   /**
    * \return the number of points at the specified pyramid level

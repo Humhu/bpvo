@@ -111,6 +111,7 @@ Impl(const Matrix33& K, float b, ImageSize s, const AlgorithmParameters& p)
 static inline Result FirstFrameResult(int n_levels)
 {
   Result r;
+  r.success = true;
   r.pose.setIdentity();
   r.covariance.setIdentity();
   r.optimizerStatistics.resize(n_levels);

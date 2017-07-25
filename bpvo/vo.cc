@@ -144,6 +144,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   {
     if(ret.optimizerStatistics[i].status == kSolverError)
     {
+      Warn("Pose estimation failed!");
       ret.success = false;
       return ret;
     }

@@ -141,16 +141,15 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                    _T_kf, T_est);
   // Check to see if estimation succeeded
+  ret.success = true;
   for(int i = ret.optimizerStatistics.size(); i >= _params.maxTestLevel; --i )
   {
     if(ret.optimizerStatistics[i].status == kSolverError)
     {
       Warn("Pose estimation failed!");
       ret.success = false;
-      return ret;
     }
   }
-  ret.success = true;
 
   ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
@@ -161,7 +160,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
     std::swap(_prev_frame, _cur_frame);
     ret.pose = T_est * _T_kf.inverse(); // return the relative motion
     _T_kf = T_est; // accumulate the intitialization
-  } else
+  } 
+  else
   {
     //
     // store the point cloud

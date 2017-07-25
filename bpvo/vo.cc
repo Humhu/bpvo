@@ -151,16 +151,6 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   Result ret;
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                    _T_kf, T_est);
-  // Check to see if estimation succeeded
-  ret.success = true;
-  for(int i = ret.optimizerStatistics.size(); i >= _params.maxTestLevel; --i )
-  {
-    if(ret.optimizerStatistics[i].status == kSolverError)
-    {
-      Warn("Pose estimation failed!");
-      ret.success = false;
-    }
-  }
 
   ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
@@ -209,6 +199,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D)
   }
 
   _trajectory.push_back(ret.pose);
+
+  ret.success = checkResult( ret.optimizerStatistics );
 
   if(ret.pointCloud)
     ret.pointCloud->pose() = _trajectory.back();

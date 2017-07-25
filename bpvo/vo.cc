@@ -36,6 +36,7 @@ class VisualOdometry::Impl
 
   inline const Trajectory& trajectory() const { return _trajectory; }
 
+  inline bool checkResult( const std::vector<OptimizerStatistics>& stats );
   inline int numPointsAtLevel(int) const;
   inline const PointVector& pointsAtLevel(int) const;
 
@@ -120,6 +121,16 @@ static inline Result FirstFrameResult(int n_levels)
   r.pointCloud = nullptr;
 
   return r;
+}
+
+inline bool VisualOdometry::Impl::
+checkResult(const std::vector<OptimizerStatistics>& stats)
+{
+  for(int i = stats.size(); i >= _params.maxTestLevel; --i)
+  {
+    if( stats[i].status == kSolverError ) { return false; }
+  }
+  return true;
 }
 
 inline Result VisualOdometry::Impl::

@@ -156,9 +156,9 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
   ret.success = checkResult( ret.optimizerStatistics );
   if( !ret.success ) { Warn("Initial pose estimation failed\n"); }
 
-  std::cout << "Prev: " << std::endl << _T_kf << std::endl;
-  std::cout << "Guess: " << std::endl << T_guess << std::endl;
-  std::cout << "T_est: " << std::endl << T_est << std::endl;
+  // std::cout << "Prev: " << std::endl << _T_kf << std::endl;
+  // std::cout << "Guess: " << std::endl << T_guess << std::endl;
+  // std::cout << "T_est: " << std::endl << T_est << std::endl;
 
   ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
@@ -172,6 +172,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
   } 
   else
   {
+    Info("Keyframing: %s\n", ToString(ret.keyFramingReason).c_str());
     //
     // store the point cloud
     ret.pointCloud = getPointCloudFromRefFrame();

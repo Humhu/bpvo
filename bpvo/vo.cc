@@ -292,8 +292,9 @@ getPointCloudFromRefFrame() const
 
   const auto n = points.size();
   // TODO we should test if the weights/num_channels == n!
-  THROW_ERROR_IF( n > weights.size(),
-                 Format("size mismatch [%zu != %zu]", points.size(), weights.size()).c_str());
+  // THROW_ERROR_IF( n > weights.size(),
+  //                Format("size mismatch [%zu != %zu]", points.size(), weights.size()).c_str());
+  if( n != weights.size() ) { return nullptr; }
 
   auto ret = make_unique<PointCloud>(n);
 

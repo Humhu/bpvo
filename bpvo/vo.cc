@@ -196,6 +196,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
       ret.pose = T_est *  _T_kf.inverse();
       _T_kf.setIdentity(); // reset initalization
       Warn("Could not obtain intermediate frame!\n");
+      ret.success = false;
     } else // Try using prev_frame as keyframe
     {
       std::swap(_prev_frame, _ref_frame);

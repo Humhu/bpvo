@@ -437,7 +437,8 @@ enum KeyFramingReason
   kLargeRotation,            //< rotation was large
   kSmallFracOfGoodPoints,    //< fraction of good points is low
   kNoKeyFraming,             //< there was no keyframe
-  kFirstFrame
+  kFirstFrame,
+  kEstimationFailed,         //< pose estimation failed
 }; // KeyFramingReason
 
 /**

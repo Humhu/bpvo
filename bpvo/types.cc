@@ -220,6 +220,7 @@ std::string ToString(KeyFramingReason r)
     case KeyFramingReason::kSmallFracOfGoodPoints: return "SmallFracOfGoodPoints";
     case KeyFramingReason::kNoKeyFraming: return "NoKeyFraming";
     case KeyFramingReason::kFirstFrame: return "FirstFrame";
+    case KeyFramingReason::kEstimationFailed: return "EstimationFailed";
   }
 
   return "Unknown";

@@ -154,15 +154,21 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
   ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                    T_guess, T_est);
   ret.success = checkResult( ret.optimizerStatistics );
-  if( !ret.success ) { Warn("Initial pose estimation failed\n"); }
+  if( !ret.success )
+  { 
+    Warn("Initial pose estimation failed\n");
+    ret.keyFramingReason = kEstimationFailed;
+  }
+  else
+  {
+    ret.keyFramingReason = shouldKeyFrame(T_est);
+  }
 
   // std::cout << "Prev: " << std::endl << _T_kf << std::endl;
   // std::cout << "Guess: " << std::endl << T_guess << std::endl;
   // std::cout << "T_est: " << std::endl << T_est << std::endl;
 
-  ret.keyFramingReason = shouldKeyFrame(T_est);
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
-
   if(!ret.isKeyFrame)
   {
     // store _cur_frame in _prev_frame as a keyframe candidate for the future
@@ -204,8 +210,17 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
       ret.success = checkResult( ret.optimizerStatistics );  
-      if( !ret.success ) { Warn("Keyframe pose re-estimation failed\n" ); }
-      if( shouldKeyFrame(T_est) != kNoKeyFraming )
+      if( !ret.success ) 
+      {
+        Warn("Keyframe pose re-estimation failed\n" );
+        ret.keyFramingReason = kEstimationFailed;
+      }
+      else
+      {
+        ret.keyFramingReason = shouldKeyFrame(T_est);
+      }
+
+      if( ret.keyFramingReason != kNoKeyFraming )
       {
         Warn("Keyframe failed keyframe requirements!\n");
         ret.success = false;

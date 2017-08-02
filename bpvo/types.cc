@@ -328,7 +328,7 @@ Result::Result()
   , keyFramingReason(kNoKeyFraming) {}
 
 Result::Result(Result&& other) noexcept
-  : success(false)
+  : success(other.success)
   , pose(other.pose)
   , covariance(other.covariance)
   , optimizerStatistics(std::move(other.optimizerStatistics))

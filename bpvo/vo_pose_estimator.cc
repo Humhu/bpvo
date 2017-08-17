@@ -122,6 +122,10 @@ OptimizerLM::run(const TemplateData* tdata, const DenseDescriptor* channels,
                  Matrix44& T_est)
 {
   OptimizerStatistics ret;
+  if( _residuals.empty() )
+  {
+	  return ret;
+  }
 
   float sigma = 1.0f;
   AutoScaleEstimator scale_estimator;

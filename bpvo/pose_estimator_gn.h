@@ -72,6 +72,8 @@ class PoseEstimatorGN : public PoseEstimatorBase< PoseEstimatorGN<TDataT> >
     tdata->computeResiduals(channels, data.T, Base::residuals(), Base::valid());
     this->replicateValidFlags();
     auto sigma = this->_scale_estimator.estimateScale(Base::residuals(), Base::valid());
+	if(std::isnan(sigma)) { return sigma; }
+
     MEstimator::ComputeWeights(this->_params.lossFunction, Base::residuals(),
                                Base::valid(), sigma, Base::weights());
 
@@ -87,10 +89,9 @@ class PoseEstimatorGN : public PoseEstimatorBase< PoseEstimatorGN<TDataT> >
   {
     f_norm = this->linearize(tdata, channels, data);
 
-    if(!data.solve()) {
-      if(this->_params.verbosity != VerbosityType::kSilent)
-        Warn("solver failed");
-
+    if(!data.solve() || std::isnan(f_norm)) {
+    //   if(this->_params.verbosity != VerbosityType::kSilent)
+        // Warn("solver failed");
       Warn("Solver failed\n");
       status = PoseEstimationStatus::kSolverError;
       return false;

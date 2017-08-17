@@ -58,6 +58,8 @@ class PoseEstimatorLM : public PoseEstimatorBase< PoseEstimatorLM<TDataT> >
     tdata->computeResiduals(channels, data.T, Base::residuals(), Base::valid());
     this->replicateValidFlags();
     auto sigma = this->_scale_estimator.estimateScale(Base::residuals(), Base::valid());
+	if(std::isnan(sigma)) { return sigma; }
+	
     MEstimator::ComputeWeights(this->_params.lossFunction, Base::residuals(),
                                Base::valid(), sigma, Base::weights());
 
@@ -77,6 +79,12 @@ class PoseEstimatorLM : public PoseEstimatorBase< PoseEstimatorLM<TDataT> >
     float eps2 = this->_params.parameterTolerance;
 
     f_norm = this->linearize(tdata, channels, data, true);
+	if(std::isnan(f_norm))
+	{
+		Warn("Solver failed\n");
+		status = PoseEstimationStatus::kSolverError;
+		return false;
+	}
 
     do {
       printf("u: %f\n", _u);

@@ -468,6 +468,7 @@ float AutoScaleEstimator::estimateScale(const ResidualsVector& residuals,
                                         const ValidVector& valid)
 {
   assert( residuals.size() == valid.size() );
+  if( residuals.empty() ) { return std::numeric_limits<float>::quiet_NaN(); }
 
   if(_delta_scale > _tol)
   {

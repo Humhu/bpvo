@@ -66,7 +66,7 @@ class AutoScaleEstimator
   float getScale() const;
 
   /**
-   * Estimate the scale/stdandard deviation of errors
+   * Estimate the scale/stdandard deviation of errors. Returns NaN if residuals is empty.
    *
    * \param residuals the vector of residuals
    * \param valid indicates which points are valid

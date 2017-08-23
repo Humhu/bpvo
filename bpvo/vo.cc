@@ -113,7 +113,7 @@ Impl(const Matrix33& K, float b, ImageSize s, const AlgorithmParameters& p)
 static inline Result FirstFrameResult(int n_levels)
 {
   Result r;
-  r.success = true;
+  r.success = false;
   r.displacement.setIdentity();
   r.covariance.setIdentity();
   r.optimizerStatistics.resize(n_levels);
@@ -164,10 +164,6 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
     ret.keyFramingReason = shouldKeyFrame(T_est);
   }
 
-  // std::cout << "Prev: " << std::endl << _T_kf << std::endl;
-  // std::cout << "Guess: " << std::endl << T_guess << std::endl;
-  // std::cout << "T_est: " << std::endl << T_est << std::endl;
-
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
   
   if(!ret.isKeyFrame)
@@ -195,25 +191,26 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
       _ref_frame->setTemplate();
       Warn("Could not obtain intermediate frame!\n");
       ret.success = false;
-    } 
-    // Else use previous frame with current
-    else 
+    }
+    // Else use previous frame with current frame
+    else
     {
       std::swap(_prev_frame, _ref_frame);
-      _prev_frame->clear(); // no longer a suitable candidate for keyframing
+      _prev_frame->clear();
       _ref_frame->setTemplate();
 
-      Matrix44 T_init = guess;
+      T_guess = guess;
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
-                                                       T_init, T_est);
+                                                       T_guess, T_est);
+      ret.displacement = T_est;
+      _T_kf = T_est;
+
       ret.success = checkResult( ret.optimizerStatistics );  
-      if( !ret.success ) 
+      if( !ret.success )
       {
         Warn("Keyframe pose re-estimation failed\n" );
         ret.keyFramingReason = kEstimationFailed;
       }
-
-      // Check to see if new keyframe passes checks
       else
       {
         ret.keyFramingReason = shouldKeyFrame(T_est);
@@ -223,11 +220,6 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
       {
         Warn("Backup keyframe failed keyframe requirements!\n");
         ret.success = false;
-      }
-      else
-      {
-        ret.displacement = T_est;
-        _T_kf = T_est;
       }
     }
   }

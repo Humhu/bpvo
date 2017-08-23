@@ -114,7 +114,7 @@ static inline Result FirstFrameResult(int n_levels)
 {
   Result r;
   r.success = true;
-  r.pose.setIdentity();
+  r.displacement.setIdentity();
   r.covariance.setIdentity();
   r.optimizerStatistics.resize(n_levels);
   r.isKeyFrame = true;
@@ -169,45 +169,41 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
   // std::cout << "T_est: " << std::endl << T_est << std::endl;
 
   ret.isKeyFrame = KeyFramingReason::kNoKeyFraming != ret.keyFramingReason;
+  
   if(!ret.isKeyFrame)
   {
     // store _cur_frame in _prev_frame as a keyframe candidate for the future
     std::swap(_prev_frame, _cur_frame);
-    ret.pose = T_est * _T_kf.inverse(); // return the relative motion
-    _T_kf = T_est; // accumulate the intitialization
+    // If no keyframing required, return displacement by subtracting accumulated displacements
+    ret.displacement = T_est * _T_kf.inverse();
+    _T_kf = T_est;
   } 
   else
   {
     Info("Keyframing: %s\n", ToString(ret.keyFramingReason).c_str());
-    //
+    // If keyframing required, reset accumulated displacements
+    _T_kf.setIdentity();
+
     // store the point cloud
     ret.pointCloud = getPointCloudFromRefFrame();
 
+    // If no previous frame, we've keyframed twice in a row unsuccessfully
+    // Can't return anything useful
     if(_prev_frame->empty())
     {
-      //
-      // we were unable to obtain an intermediate frame (either because
-      // keyframing is turned off, or all estimated motions thus far satisfy the
-      // keyframine criteria
-      //
       std::swap(_cur_frame, _ref_frame);
       _ref_frame->setTemplate();
-
-      ret.pose = T_est *  _T_kf.inverse();
-      _T_kf.setIdentity(); // reset initalization
       Warn("Could not obtain intermediate frame!\n");
       ret.success = false;
-    } else // Try using prev_frame as keyframe
+    } 
+    // Else use previous frame with current
+    else 
     {
       std::swap(_prev_frame, _ref_frame);
       _prev_frame->clear(); // no longer a suitable candidate for keyframing
       _ref_frame->setTemplate();
 
-      //
-      // re-estimate the motion, because the estimate than caused keyframing is
-      // most likely bogus
-      //
-      Matrix44 T_init = guess; //(Matrix44::Identity());
+      Matrix44 T_init = guess;
       ret.optimizerStatistics = _vo_pose->estimatePose(_ref_frame.get(), _cur_frame.get(),
                                                        T_init, T_est);
       ret.success = checkResult( ret.optimizerStatistics );  
@@ -216,6 +212,8 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
         Warn("Keyframe pose re-estimation failed\n" );
         ret.keyFramingReason = kEstimationFailed;
       }
+
+      // Check to see if new keyframe passes checks
       else
       {
         ret.keyFramingReason = shouldKeyFrame(T_est);
@@ -223,19 +221,22 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
 
       if( ret.keyFramingReason != kNoKeyFraming )
       {
-        Warn("Keyframe failed keyframe requirements!\n");
+        Warn("Backup keyframe failed keyframe requirements!\n");
         ret.success = false;
       }
-      
-      ret.pose = T_est;
-      _T_kf = T_est;
+      else
+      {
+        ret.displacement = T_est;
+        _T_kf = T_est;
+      }
     }
   }
 
-  _trajectory.push_back(ret.pose);
+  // TODO
+  // _trajectory.push_back(ret.pose);
 
-  if(ret.pointCloud)
-    ret.pointCloud->pose() = _trajectory.back();
+  // if(ret.pointCloud)
+  //   ret.pointCloud->pose() = _trajectory.back();
 
   return ret;
 }

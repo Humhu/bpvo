@@ -498,12 +498,12 @@ struct Result
   bool success;
 
   /**
-   * The estimated pose.
+   * The estimated displacement.
    *
    * This is the relative motion of the most recently added frame wrt the
-   * current reference/template frame
+   * previous frame. This should be integrated to determine the pose.
    */
-  Pose pose;
+  Pose displacement;
 
   /**
    * Covariance of the estimated parameters. The inverse of the weighed hessian

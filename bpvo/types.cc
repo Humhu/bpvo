@@ -322,14 +322,14 @@ std::ostream& operator<<(std::ostream& os, const OptimizerStatistics& s)
 
 Result::Result()
   : success(false)
-  , pose(Pose::Identity())
+  , displacement(Pose::Identity())
   , covariance(PoseCovariance::Identity())
   , isKeyFrame(false)
   , keyFramingReason(kNoKeyFraming) {}
 
 Result::Result(Result&& other) noexcept
   : success(other.success)
-  , pose(other.pose)
+  , displacement(other.displacement)
   , covariance(other.covariance)
   , optimizerStatistics(std::move(other.optimizerStatistics))
   , isKeyFrame(other.isKeyFrame)
@@ -341,7 +341,7 @@ Result::~Result() {}
 Result& Result::operator=(Result&& r) noexcept
 {
   success = r.success;
-  pose = r.pose;
+  displacement = r.displacement;
   covariance = r.covariance;
   optimizerStatistics = std::move(r.optimizerStatistics);
   isKeyFrame = r.isKeyFrame;
@@ -352,7 +352,7 @@ Result& Result::operator=(Result&& r) noexcept
 
 std::ostream& operator<<(std::ostream& os, const Result& r)
 {
-  os << r.pose << "\n";
+  os << r.displacement << "\n";
   os << "isKeyFrame: " << std::boolalpha << r.isKeyFrame << std::noboolalpha << "\n";
   if(!r.optimizerStatistics.empty())
     os << r.optimizerStatistics.front();

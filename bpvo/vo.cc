@@ -127,10 +127,22 @@ static inline Result FirstFrameResult(int n_levels)
 inline bool VisualOdometry::Impl::
 checkResult(const std::vector<OptimizerStatistics>& stats)
 {
-  for(int i = stats.size(); i >= _params.maxTestLevel; --i)
+  std::stringstream ss;
+  for(int i = stats.size() - 1; i >= _params.maxTestLevel; --i)
+    {
+      ss << i << ": " << stats[i].finalError << "(" << stats[i].numPixels << "), ";
+    }
+
+  const OptimizerStatistics& finStats = stats[_params.maxTestLevel];
+  if( finStats.finalError / finStats.numPixels > _params.maxSolutionError ) 
+  {
+     Info("Error exceeded: %s\n", ss.str().c_str());
+     return false; 
+  }
+
+  for(int i = stats.size() - 1; i >= _params.maxTestLevel; --i)
   {
     if( stats[i].status == kSolverError ) { return false; }
-    if( stats[i].finalError / stats[i].numPixels > _params.maxSolutionError ) { return false; }
   }
   return true;
 }

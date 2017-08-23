@@ -338,6 +338,9 @@ struct AlgorithmParameters
    */
   float goodPointThreshold;
 
+  // Max allowable solution error
+  float maxSolutionError;
+
 
   //
   // pixel selection
@@ -462,6 +465,9 @@ struct OptimizerStatistics
    * detect issues with the data.
    */
   float finalError;
+
+  // Number of pixels used in this optimization
+  unsigned int numPixels;
 
   /**
    * First order optimiality at the end of the optimization, aka the Inf norm of

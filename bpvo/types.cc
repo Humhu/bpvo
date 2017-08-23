@@ -56,6 +56,7 @@ AlgorithmParameters::AlgorithmParameters()
     , minRotationMagToKeyFrame(5.0)
     , maxFractionOfGoodPointsToKeyFrame(0.6)
     , goodPointThreshold(0.85)
+    , maxSolutionError(10.0)
     , minNumPixelsForNonMaximaSuppression(320*240)
     , nonMaxSuppRadius(1)
     , minNumPixelsToWork(256)
@@ -95,6 +96,7 @@ AlgorithmParameters::AlgorithmParameters(std::string filename)
   minTranslationMagToKeyFrame = cf.get<float>("minTranslationMagToKeyFrame", 0.1);
   minRotationMagToKeyFrame = cf.get<float>("minRotationMagToKeyFrame", 2.5);
   maxFractionOfGoodPointsToKeyFrame = cf.get<float>("maxFractionOfGoodPointsToKeyFrame", 0.6f);
+  maxSolutionError = cf.get<float>("maxSolutionError", 10.0);
   goodPointThreshold = cf.get<float>("goodPointThreshold", 0.75);
   minNumPixelsForNonMaximaSuppression = cf.get<int>("minNumPixelsForNonMaximaSuppression", 320*240);
   nonMaxSuppRadius = cf.get<int>("nonMaxSuppRadius", 1);
@@ -292,6 +294,7 @@ std::ostream& operator<<(std::ostream& os, const AlgorithmParameters& p)
   os << "minTranslationMagToKeyFrame = " << p.minTranslationMagToKeyFrame << "\n";
   os << "minRotationMagToKeyFrame = " << p.minRotationMagToKeyFrame << "\n";
   os << "maxFractionOfGoodPointsToKeyFrame = " << p.maxFractionOfGoodPointsToKeyFrame << "\n";
+  os << "maxSolutionError = " << p.maxSolutionError << "\n";
   os << "goodPointThreshold = " << p.goodPointThreshold << "\n";
   os << "minNumPixelsForNonMaximaSuppression = " << p.minNumPixelsForNonMaximaSuppression << "\n";
   os << "minNumPixelsToWork = " << p.minNumPixelsToWork << "\n";

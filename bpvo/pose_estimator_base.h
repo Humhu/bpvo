@@ -331,6 +331,7 @@ run(const TemplateData* tdata, const DenseDescriptor* desc, Matrix44& T)
   ret.numIterations = 0;
   ret.firstOrderOptimality = 0;
   ret.status = PoseEstimationStatus::kMaxIterations;
+  ret.numPixels = tdata->numPixels();
 
   PoseEstimatorData data;
   data.T = T;

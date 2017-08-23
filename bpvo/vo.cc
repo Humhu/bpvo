@@ -130,6 +130,7 @@ checkResult(const std::vector<OptimizerStatistics>& stats)
   for(int i = stats.size(); i >= _params.maxTestLevel; --i)
   {
     if( stats[i].status == kSolverError ) { return false; }
+    if( stats[i].finalError / stats[i].numPixels > _params.maxSolutionError ) { return false; }
   }
   return true;
 }

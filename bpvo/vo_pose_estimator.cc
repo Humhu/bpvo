@@ -85,7 +85,9 @@ VisualOdometryPoseEstimator::estimatePose(
     }
 
     // Checks for number of points in templates
-    if( ref_frame->getTemplateDataAtLevel(i)->numPixels() < _params.minNumPixelsToWork )
+    // Scale pixel requirement by factor of 4 per level
+    int minPix = _params.minNumPixelsToWork << i * 2;
+    if( ref_frame->getTemplateDataAtLevel(i)->numPixels() < minPix )
     {
       Warn("VOPoseEstimator: Pixels %d < min %d\n", ref_frame->getTemplateDataAtLevel(i)->numPixels(), _params.minNumPixelsToWork );
       return ret;

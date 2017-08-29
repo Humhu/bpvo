@@ -94,14 +94,14 @@ struct PoseEstimatorData_
     bool ok =  (H*dp).isApprox(G);
     if(!ok) {
       Warn("Failed to solve system. Trying augmented\n");
-      std::cout << H << std::endl;
-      std::cout << G << std::endl;
-      std::cout << ((H * dp) - G).transpose() << std::endl;
+      // std::cout << H << std::endl;
+      // std::cout << G << std::endl;
+      // std::cout << ((H * dp) - G).transpose() << std::endl;
       ok = solve2Augmented(0.001);
       if(!ok) {
         Warn("Failed again!\n");
-        std::cout << H << std::endl;
-        std::cout << G << std::endl;
+        // std::cout << H << std::endl;
+        // std::cout << G << std::endl;
       } else {
         Warn("ok!\n");
       }

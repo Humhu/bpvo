@@ -446,6 +446,9 @@ float ScaleEstimator(const ResidualsVector& residuals,
     if(valid_flags[i] != 0)
       hist.add(std::fabs(residuals[i]));
 
+  if(hist.numSamples() == 0)
+    return std::numeric_limits<float>::quiet_NaN();
+
   return (1.4826f * (1.0f + 5.0f / (hist.numSamples()-6) )) * hist.median();
 }
 
@@ -460,6 +463,9 @@ float ScaleEstimator(const ResidualsVector& residuals,
   for(size_t i = 0; i < residuals.size(); ++i)
     if(valid_flags[i] != 0)
       buffer.push_back( std::fabs(residuals[i]) );
+
+  if(buffer.empty())
+    return std::numeric_limits<float>::quiet_NaN();
 
   return (1.4826f * (1.0f + 5.0f / (buffer.size()-6) )) * median(buffer);
 }

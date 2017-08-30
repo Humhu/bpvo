@@ -59,7 +59,7 @@ AlgorithmParameters::AlgorithmParameters()
     , maxSolutionError(10.0)
     , minNumPixelsForNonMaximaSuppression(320*240)
     , nonMaxSuppRadius(1)
-    , minNumPixelsToWork(256)
+    , minRatioPixelsToWork(256)
     , minSaliency(0.1)
     , minValidDisparity(0.001)
     , maxValidDisparity(512.0f)
@@ -100,7 +100,7 @@ AlgorithmParameters::AlgorithmParameters(std::string filename)
   goodPointThreshold = cf.get<float>("goodPointThreshold", 0.75);
   minNumPixelsForNonMaximaSuppression = cf.get<int>("minNumPixelsForNonMaximaSuppression", 320*240);
   nonMaxSuppRadius = cf.get<int>("nonMaxSuppRadius", 1);
-  minNumPixelsToWork = cf.get<int>("minNumPixelsToWork", 256);
+  minRatioPixelsToWork = cf.get<int>("minRatioPixelsToWork", 256);
   minSaliency = cf.get<float>("minSaliency", 0.1f);
   minValidDisparity = cf.get<float>("minValidDisparity", 1.0f);
   maxValidDisparity = cf.get<float>("maxValidDisparity", 512.0f);
@@ -297,7 +297,7 @@ std::ostream& operator<<(std::ostream& os, const AlgorithmParameters& p)
   os << "maxSolutionError = " << p.maxSolutionError << "\n";
   os << "goodPointThreshold = " << p.goodPointThreshold << "\n";
   os << "minNumPixelsForNonMaximaSuppression = " << p.minNumPixelsForNonMaximaSuppression << "\n";
-  os << "minNumPixelsToWork = " << p.minNumPixelsToWork << "\n";
+  os << "minRatioPixelsToWork = " << p.minRatioPixelsToWork << "\n";
   os << "minSaliency = " << p.minSaliency << "\n";
   os << "minValidDisparity = " << p.minValidDisparity << "\n";
   os << "maxValidDisparity = " << p.maxValidDisparity << "\n";

@@ -77,6 +77,8 @@ VisualOdometryPoseEstimator::estimatePose(
   /*OptimizerLM optimizer;
   optimizer.setParameters(_pose_est_params_low_res);*/
 
+  cv::Size refSize = ref_frame->imagePointer()->size();
+  unsigned long numRefPix = refSize.width * refSize.height;
   for(int i = ref_frame->numLevels()-1; i >= _params.maxTestLevel; --i)
   {
     if(i >= _params.maxTestLevel) {
@@ -86,7 +88,7 @@ VisualOdometryPoseEstimator::estimatePose(
 
     // Checks for number of points in templates
     // Scale pixel requirement by factor of 4 per level
-    int minPix = _params.minNumPixelsToWork / std::pow(4, i);
+    unsigned int minPix = numRefPix * _params.minRatioPixelsToWork / std::pow(4, i);
     if( ref_frame->getTemplateDataAtLevel(i)->numPixels() < minPix )
     {
       Warn("VOPoseEstimator: Pixels %d < min %d\n", ref_frame->getTemplateDataAtLevel(i)->numPixels(), minPix );

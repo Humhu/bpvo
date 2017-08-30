@@ -358,9 +358,9 @@ struct AlgorithmParameters
   int nonMaxSuppRadius;
 
   /**
-   * Minimum number of pixels to estimate pose
+   * Minimum ratio of image pixels to estimate pose
    */
-  int minNumPixelsToWork;
+  float minRatioPixelsToWork;
 
   /**
    * Minimum saliency value for a pixel to be used in the optimization

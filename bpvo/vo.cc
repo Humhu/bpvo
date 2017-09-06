@@ -169,7 +169,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
   ret.success = checkResult( ret.optimizerStatistics );
   if( !ret.success )
   { 
-    Warn("Initial pose estimation failed\n");
+    Info("Initial pose estimation failed\n");
     ret.keyFramingReason = kEstimationFailed;
   }
   else
@@ -202,7 +202,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
     {
       std::swap(_cur_frame, _ref_frame);
       _ref_frame->setTemplate();
-      Warn("Could not obtain intermediate frame!\n");
+      Info("Could not obtain intermediate frame!\n");
       ret.success = false;
     }
     // Else use previous frame with current frame
@@ -221,7 +221,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
       ret.success = checkResult( ret.optimizerStatistics );  
       if( !ret.success )
       {
-        Warn("Keyframe pose re-estimation failed\n" );
+        Info("Keyframe pose re-estimation failed\n" );
         ret.keyFramingReason = kEstimationFailed;
       }
       else
@@ -231,7 +231,7 @@ addFrame(const cv::Mat& I, const cv::Mat& D, const Matrix44& guess)
 
       if( ret.keyFramingReason != kNoKeyFraming )
       {
-        Warn("Backup keyframe failed keyframe requirements!\n");
+        Info("Backup keyframe failed keyframe requirements!\n");
         ret.success = false;
       }
     }

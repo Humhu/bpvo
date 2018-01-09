@@ -91,7 +91,9 @@ VisualOdometryPoseEstimator::estimatePose(
     int minPix = numRefPix * _params.minRatioPixelsToWork / std::pow(4, i);
     if( ref_frame->getTemplateDataAtLevel(i)->numPixels() < minPix )
     {
-      Info("VOPoseEstimator: Pixels %d < min %d\n", ref_frame->getTemplateDataAtLevel(i)->numPixels(), minPix );
+      Info("VOPoseEstimator: Pixels %d < min %d\n", 
+           ref_frame->getTemplateDataAtLevel(i)->numPixels(), 
+           minPix );
       return ret;
     }
 
